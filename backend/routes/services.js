@@ -2,16 +2,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const auth = require('../middleware/auth');
-
-// GET все услуги
 router.get('/', (req, res) => {
   db.all('SELECT * FROM services', (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows);
   });
 });
-
-// GET одна услуга
 router.get('/:id', (req, res) => {
   db.get('SELECT * FROM services WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -19,8 +15,6 @@ router.get('/:id', (req, res) => {
     res.json(row);
   });
 });
-
-// POST (только админ)
 router.post('/', auth, (req, res) => {
   const { name, description, price_per_unit, unit, category, image_url } = req.body;
   db.run(
@@ -32,8 +26,6 @@ router.post('/', auth, (req, res) => {
     }
   );
 });
-
-// PUT (только админ)
 router.put('/:id', auth, (req, res) => {
   const { name, description, price_per_unit, unit, category, image_url } = req.body;
   db.run(
@@ -45,13 +37,10 @@ router.put('/:id', auth, (req, res) => {
     }
   );
 });
-
-// DELETE (только админ)
 router.delete('/:id', auth, (req, res) => {
   db.run(`DELETE FROM services WHERE id = ?`, [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ deleted: this.changes });
   });
 });
-
 module.exports = router;
