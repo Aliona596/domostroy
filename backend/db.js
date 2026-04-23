@@ -1,12 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const bcrypt = require('bcryptjs');
-
 const db = new sqlite3.Database(path.join(__dirname, 'domostroy.db'));
-
-// Инициализация таблиц
 db.serialize(() => {
-  // Услуги
   db.run(`
     CREATE TABLE IF NOT EXISTS services (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,8 +14,6 @@ db.serialize(() => {
       image_url TEXT
     )
   `);
-
-  // Заявки
   db.run(`
     CREATE TABLE IF NOT EXISTS requests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,8 +26,6 @@ db.serialize(() => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
-
-  // Пользователи (админ)
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,12 +33,8 @@ db.serialize(() => {
       password_hash TEXT NOT NULL
     )
   `);
-
-  // Добавление тестового админа (admin / admin123)
   const hashedPassword = bcrypt.hashSync('admin123', 10);
   db.run(`INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)`, ['admin', hashedPassword]);
-
-  // Добавление тестовых услуг
   db.run(`INSERT OR IGNORE INTO services (id, name, description, price_per_unit, unit, category, image_url) VALUES 
     (1, 'Проектирование дома', 'Индивидуальный проект под ключ', 500, 'м²', 'design', '/images/design.jpg'),
     (2, 'Фундамент', 'Ленточный или плитный фундамент', 4500, 'м³', 'foundation', '/images/foundation.jpg'),
@@ -55,5 +43,4 @@ db.serialize(() => {
     (5, 'Отделка', 'Черновая и чистовая отделка', 2500, 'м²', 'finishing', '/images/finishing.jpg')
   `);
 });
-
 module.exports = db;
