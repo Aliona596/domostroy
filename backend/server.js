@@ -10,7 +10,6 @@ app.use('/api/services', require('./routes/services'));
 app.use('/api/requests', require('./routes/requests'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/calculator', require('./routes/calculator'));
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
